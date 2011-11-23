@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+{% block content %}
+
+<div id="robot"><div class="speech_bubble"><h2>Greetings, Human. I'm GetLostBot!<h2><p>I'm a free service that challenges you to break your routine and explore new places.</p></div></div>
+
+
+
+<p>Once you sign up, GetLostBot will quietly keep an eye on the places you visit. If it feels that you are going to the same places too often, it will send you a challenge.</p>
+<p>When this happens, you will receive a message with some mysterious walking directions. Follow these to discover a place nearby that you have never been to before!</p>
+<p>Who knows, maybe you will find your new favourite place! After all, if we never venture into the unknown, how do we get anywhere new?</p>
+
+
+<p>To start receiving challenges, you need to be a Foursquare user and authorise GetLostBot by clicking the link below.</p>
+
+<a href="{{foursquare_uri}}"><img src="/static/images/connect-foursquare.png" alt="Connect to Foursquare" border="0" /></a></p>
+
+{% if session %}
+<p>You seem to have already authorised GetLostBot. You can change your settings or unsubscribe by <a href="/profile">visiting your profile page</a>.</p>
+{% endif %}
+<p style="font-size:small;">Want to <a href="/about">find out more</a>?</p>
+{% endblock %}

@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Error{% endblock %}
+{% block content %}
+<div id="robot" onclick="document.location.href = '/';"><div class="speech_bubble"><h2>Error! Cannot Compute!<h2> <p>{{error_title}}</div></div>
+
+<p>{{error_message}}</p>
+{% endblock %}

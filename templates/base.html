@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+    	 <title>
+            {%block title%}{%endblock%} | GetLostBot
+        </title>
+        <style type="text/css">
+            @import "/static/css/screen.css";
+        </style>
+        <link rel="SHORTCUT ICON" href="/static/images/favicon.ico"/>
+        <link href='http://fonts.googleapis.com/css?family=Nova+Square' rel='stylesheet' type='text/css'>
+        
+        {%block scripts%}{%endblock%}
+    </head>
+    <body>
+	    <script type="text/javascript">window.onload=function(){ {%block onload%}{%endblock%} }</script>
+	    
+
+		<div id="wrapper">
+	    	<div id="header">
+	            	<div id="logo" onclick="document.location.href = '/';">
+	                &nbsp;
+	                </div>
+	        </div>
+	        
+	        <div id="content">
+	        {%block content%}{%endblock%}
+	        </div>
+	        <div id="footer">
+	                <p>GetLostBot is a 24hr hack developed by <a href="http://ben.kirman.org">Ben Kirman</a> for the <a href="http://rewiredstate.org/events/power-of-minds">"Power of Minds" event, organised by Rewired State and Honda</a>.</p>
+	        </div>
+        </div>
+    </body>
+</html>

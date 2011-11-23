@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock %}
+{% block content %}
+
+<div id="robot" onclick="document.location.href='/';"><div class="speech_bubble"><h2>Feeble Human is Confused?<h2></div></div>
+
+<h3>What does this do?</h3>
+<p>GetLostBot is a web service for encouraging serendipity. It does this by monitoring your movement activity and creating an intervention when it feels you have fallen into a routine.</p>
+<p>If this happens (it might be tomorrow, it might be in a month), it will find somewhere nearby that is similar to your current location, but that you have never visited. For example, if you are in a pub, it will find another nearby pub where you have never checked-in.</p>
+<p>It will then generate walking directions for you to get to this new location, and send you a link via Twitter or Email. Importantly it won't tell you where you are going, and requires you take a leap of faith and venture into the unknown.</p>
+<p>If you want to see what the challenges look like, see what adventures other people have had on <a href="http://twitter.com/#!/getlostbot">GetLostBot's Twitter feed</a>.</p>
+<h3>How does it work?</h3>
+<p>In order to use GetLostBot, you need to be a Foursquare user (for the moment - other location services are in the pipeline). This will allow GetLostBot to know where you are and the places you visit.</p>
+<p>This works because it has access to your history of Foursquare checkins. It knows where you have been and where you haven't been. Note that none of this information is stored permanently.</p>
+<h3>How is this different from Foursquare recommendations?</h3>
+<p>Foursquare recommends venues based on what you like, what your friends like and other metrics. GetLostBot works on the opposite principle. It purposefully tries to push you out of your comfort zone and challenges you to go somewhere you have never been.</p>
+<p>This approach is inspired by a <a href="http://www.ethanzuckerman.com/blog/2011/05/12/chi-keynote-desperately-seeking-serendipity/">talk from Ethan Zuckerman</a>, where he complains that social media tries too hard to surround us with a bubble of content we have been algorithmically calculated to enjoy. He argues for the importance of <em>serendipity</em> and exposing yourself to truly different experiences.</p>
+<p>This, plus the <a href="http://www.honda.co.uk/newcivic/#/hotspot-tooltips">Honda Civic</a> message of "If we never venture into the unknown, how do we get anywhere new?", were the inspirations for creating a hack that could directly create serendipitous experiences</p> 
+<h3>Who made this?</h3>
+<p>GetLostBot was made as a hack day challenge during the "<a href="http://rewiredstate.org/events/power-of-minds">Power of Minds</a>" event, sponsored by <a href="http://hub.honda.co.uk/dreamfactory/">Honda</a>, <a href="http://www.guardian.co.uk">The Guardian</a> and organised by <a href="http://rewiredstate.org/">Rewired State</a>.</p>
+<p>It was made by <a href="http://ben.kirman.org">Ben Kirman</a> (<a href="http://www.twitter.com/#!/benki">@benki</a>), who is an academic from the <a href="http://lisc.lincoln.ac.uk">Lincoln Social Computing Research Centre</a> at the <a href="http://www.lincoln.ac.uk">University of Lincoln</a>.
+<hr />
+<p style="font-size:small;"><a href="/">Go back to the sign-up page</a>.</p>
+{% endblock %}

@@ -1,0 +1,81 @@
+
+body {
+	background-color:#041A18;
+}
+
+#wrapper {
+	background-color:#0C3B38;
+	width:800px;
+	
+	margin:auto;
+	font-family: sans-serif;
+	box-shadow: 3px 3px 5px #000;
+}
+
+#header {
+height:0px;
+}
+
+h3 {color:#09DEED;}
+
+#content { 
+	color: white;
+	margin-left:70px;
+	margin-right:70px;
+	margin-top:0px;
+	
+	}
+
+a:hover { color: #2EE8DC;}
+a {color: #2BCCC1;}
+
+#footer {
+	color: #aaa;
+	font-size:x-small;
+	text-align:center;
+	padding-top:50px;
+	padding-bottom:5px;
+}
+
+#robot {
+	height:250px;
+	margin-left:25px;
+	margin-right:50px;
+	background:url('/static/images/robot.png') left center no-repeat;
+
+}
+
+#robot div {
+	margin-left:250px;
+	}
+.speech_bubble {
+	position:relative;
+	padding:15px;
+	margin:100px 0 0.5em;
+	color:#333;
+	background:#eee;
+	/* css3 */
+	-webkit-border-radius:10px;
+	-moz-border-radius:10px;
+	border-radius:10px;
+	box-shadow: 3px 3px 3px #111;
+}
+
+.speech_bubble h2 {font-family: 'Nova Square', cursive; font-size:24pt;}
+
+.speech_bubble p {font-family: sans-serif; font-size:13pt; line-height:1.25em;}
+
+/* this isn't necessary, just saves me having to edit the HTML of the demo */
+
+/* creates the triangle */
+.speech_bubble:after {
+	content:"";
+	position:absolute;
+	top:10px;
+	left:-14px;
+	border:15px solid transparent;
+	border-bottom-color:#eee;
+    /* reduce the damage in FF3.0 */
+    display:block; 
+    width:0;
+}
