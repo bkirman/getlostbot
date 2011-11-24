@@ -25,17 +25,17 @@ class ChallengeManager(models.Manager):
                     been_here = True
                     print suggestion['name']+ " is not a suitable venue for "+str(user)+", they have been here before"
                     break
-                #ALSO, if the new place appears to be in the same building, then skip it (hard to give directions!)
-                if history['venue']['location'].has_key('lat') and suggestion['location'].has_key('lat'):
-                    if history['venue']['location']['lat'] == suggestion['location']['lat'] and history['venue']['location']['lng'] == suggestion['location']['lng'] :
-                        been_here = True
-                        print suggestion['name']+ " is not a suitable venue for "+str(user)+", they appear to be in the same building(?)"
-                        break
-                #ALSO, it must have some kind of address
-                if not ((history['venue']['location'].has_key('postalCode') and history['venue']['location'].has_key('address')) or history['venue']['location'].has_key('lat')):
+            #ALSO, if the new place appears to be in the same building, then skip it (hard to give directions!)
+            if venue['location'].has_key('lat') and suggestion['location'].has_key('lat'):
+                if venue['location']['lat'] == suggestion['location']['lat'] and venue['location']['lng'] == suggestion['location']['lng'] :
                     been_here = True
-                    print suggestion['name']+ " is not a suitable venue for "+str(user)+", the address is invalid"
-                    break
+                    print suggestion['name']+ " is not a suitable venue for "+str(user)+", they appear to be in the same building(?)"
+                    continue
+            #ALSO, it must have some kind of address
+            if not suggestion['location'].has_key('lat'):
+                been_here = True
+                print suggestion['name']+ " is not a suitable venue for "+str(user)+", the address is invalid"
+                continue
             if not been_here:
                 return suggestion
                 
