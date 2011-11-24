@@ -8,6 +8,7 @@ import urllib2
 import simplejson
 from django.core.validators import email_re
 import logging
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def index(request):
     
@@ -104,7 +105,7 @@ def force(request):
     r.POST['checkin'] = simplejson.dumps(check)
     return checkin(r)
     
-
+@csrf_exempt
 def checkin(request):
     '''
     This is the function that should be called by foursquare when a user checks in (see foursquare push API)
