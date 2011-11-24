@@ -125,16 +125,13 @@ def checkin(request):
     if Challenge.objects.checkCompletedChallenge(u,checkin['venue']['id']):
         return HttpResponse('This was a completed challenge! no need to make a new one')
     
+    #boring venues are now recommended to visit interesting ones :)
     #if it is a boring venue type, then discard
-    boring_categories = ['Apartment Buildings','Other - Buildings','Meeting Room','Factory','Courthouse','Medical','Dentist\'s Office','Doctor\'s Office','Emergency Room','Hospital','Optical Shops','Veterinarians','Corporate / Office','Conference room','Coworking Space','Residence','Home','Travel','Airport']
-    for category in checkin['venue']['categories']:
-        if category['shortName'] in boring_categories:
-            return HttpResponse('Yawn, that checkin was a bit dull')
+    #boring_categories = ['Apartment Buildings','Other - Buildings','Meeting Room','Factory','Courthouse','Medical','Dentist\'s Office','Doctor\'s Office','Emergency Room','Hospital','Optical Shops','Veterinarians','Corporate / Office','Conference room','Coworking Space','Residence','Home','Travel','Airport']
+    #for category in checkin['venue']['categories']:
+    #    if category['shortName'] in boring_categories:
+    #        return HttpResponse('Yawn, that checkin was a bit dull')
     
-    #otherwise, did they just complete a challenge?
-    #TODO: Fill this bit
-    
-    #if not, then do they need a new challenge?
     #check recent checkins - have they been here before?
     #get venue history
     req_uri = 'https://api.foursquare.com/v2/users/self/venuehistory?&oauth_token='+u.foursquare_auth
@@ -169,5 +166,5 @@ def checkin(request):
     #if we got here, the user has been to every location before
     #make a new challenge based on their current location
     Challenge.objects.createChallenge(u, checkin['venue'],venue_history)
-    return HttpResponse('New Challenge Created!')
+    return HttpResponse('Checkin Analysis Completed')
 

@@ -9,20 +9,13 @@ from getlostbot.users.models import User
 
 class ChallengeManager(models.Manager):
     
-    def createChallenge(self,user,venue,venue_history):
-        '''
-        Generate a challenge for a given user, based on their current venue and their bravery.
-        Finally, ping the user with the message that their challenge has been made
-        '''
-        #first off, check we can actually direct the person from their venue. It needs an address
-        if not ((venue['location'].has_key('postalCode') and venue['location'].has_key('address')) or venue['location'].has_key('lat')):
-            print "Can't generate a challenge for "+str(user)+" because venue "+venue['name']+ " doesn't seem to have an address or location"
-            return False
+    def getSimilarVenue(self,user,venue,venue_history):
+        '''find a suitable venue to send this user, based on nearby similar venues they have never visited'''
+        print "finding similar venues to "+venue['name']+" for "+str(user)
         #get venues similar to the one sent
         req_uri = 'https://api.foursquare.com/v2/venues/'+venue['id']+'/similar?limit=1&oauth_token='+user.foursquare_auth
         json_data = simplejson.loads(urllib2.urlopen(req_uri).read())
         
-        found_new = False
         new_venue = None
         for suggestion in json_data['response']['similarVenues']['items']:
             #if they haven't been here before, we'll send them there.
@@ -33,8 +26,8 @@ class ChallengeManager(models.Manager):
                     print suggestion['name']+ " is not a suitable venue for "+str(user)+", they have been here before"
                     break
                 #ALSO, if the new place appears to be in the same building, then skip it (hard to give directions!)
-                if history['venue']['location'].has_key('postalCode') and suggestion['location'].has_key('postalCode'):
-                    if history['venue']['location']['postalCode'] == suggestion['location']['postalCode']:
+                if history['venue']['location'].has_key('lat') and suggestion['location'].has_key('lat'):
+                    if history['venue']['location']['lat'] == suggestion['location']['lat'] and history['venue']['location']['lng'] == suggestion['location']['lng'] :
                         been_here = True
                         print suggestion['name']+ " is not a suitable venue for "+str(user)+", they appear to be in the same building(?)"
                         break
@@ -44,8 +37,45 @@ class ChallengeManager(models.Manager):
                     print suggestion['name']+ " is not a suitable venue for "+str(user)+", the address is invalid"
                     break
             if not been_here:
-                new_venue = suggestion
-                break
+                return suggestion
+                
+        return None#none found :(
+    
+    def getRecommendedVenue(self,user,venue):
+        '''
+        find a suitable venue based on the 4sq recommendation engine. Note that this doesn't care what the current venue is, so suggestions are more varied (and apparently frequently restaurants)
+        '''
+        #get venues similar to the one sent
+        print "finding recommended venues near "+venue['name']+" for "+str(user)
+        req_uri = 'https://api.foursquare.com/v2/venues/explore?ll='+str(venue['location']['lat'])+','+str(venue['location']['lng'])+'&novelty=new&limit=1&oauth_token='+user.foursquare_auth
+        #print req_uri
+        json_data = simplejson.loads(urllib2.urlopen(req_uri).read())
+        try:
+            
+            new_venue = json_data['response']['groups'][0]['items'][0]['venue']
+            #print "got data "+str(new_venue['location'])
+            if not new_venue['location'].has_key('lat'):
+                return None
+            
+        except Exception, e:
+            print "Couldn't find any suitable venues :( "+str(e)
+            return None
+        return new_venue
+        
+    
+    def createChallenge(self,user,venue,venue_history):
+        '''
+        Generate a challenge for a given user, based on their current venue and their bravery.
+        Finally, ping the user with the message that their challenge has been made
+        '''
+        #first off, check we can actually direct the person from their venue. It needs an address
+        if not venue['location'].has_key('lat'):
+            print "Can't generate a challenge for "+str(user)+" because venue "+venue['name']+ " doesn't seem to have an address or location"
+            return False
+        
+        new_venue = self.getSimilarVenue(user, venue, venue_history)
+        if new_venue == None:
+            new_venue = self.getRecommendedVenue(user, venue)
             
         if new_venue == None:
             print "Couldn't find a suggestion for venue "+ venue['name']+ " for "+str(user)+ " (probably they have already been to all the possible places)"
