@@ -7,6 +7,7 @@ from getlostbot.challenges.models import Challenge
 import urllib2
 import simplejson
 from django.core.validators import email_re
+import logging
 # Create your views here.
 def index(request):
     
@@ -108,11 +109,12 @@ def checkin(request):
     '''
     This is the function that should be called by foursquare when a user checks in (see foursquare push API)
     '''
+    
     if not request.POST.has_key("checkin"):
         raise Exception("Attempted checkin with malformed request: "+str(request.POST))
     checkin = simplejson.loads(request.POST['checkin'])
     u = get_object_or_404(User,foursquare_id=checkin['user']['id'])
-    
+    logging.debug("*CHECKIN PING from "+str(u))
     #if user is inactive, just exit here
     if not u.active:
         return HttpResponse('Inactive User')
@@ -160,7 +162,7 @@ def checkin(request):
                 else:#they haven't been here. therefore they are adventurous
                     break
         if not been_here:
-            print str(u)+" hasn't been to " + recent_checkin['venue']['name'] + " before, so doesn't need challenging...yet"
+            logging.debug( str(u)+" hasn't been to " + recent_checkin['venue']['name'] + " before, so doesn't need challenging...yet")
             return HttpResponse('User is exploring new places.')
         
     #if we got here, the user has been to every location before

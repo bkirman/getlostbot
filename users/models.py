@@ -21,8 +21,15 @@ class UserManager(models.Manager):
         
         u = User()
         u.foursquare_id = user_obj['id']
-        u.first_name = user_obj['firstName']
-        u.last_name = user_obj['lastName']
+        if user_obj.has_key('firstName'):
+            u.first_name = user_obj['firstName']
+        else:
+            u.first_name = ""
+        if user_obj.has_key('lastName'):
+            u.last_name = user_obj['lastName']
+        else:
+            u.last_name = ""
+        
         u.foursquare_auth = access_token
         
         if user_obj['contact'].has_key('email'):
@@ -39,8 +46,8 @@ class UserManager(models.Manager):
         return u
 # Create your models here.
 class User(models.Model):
-    first_name = models.CharField(max_length=100, blank=False,unique=False,null=False)
-    last_name = models.CharField(max_length=100, blank=False,unique=False,null=False)
+    first_name = models.CharField(max_length=100, blank=True,unique=False,null=False)
+    last_name = models.CharField(max_length=100, blank=True,unique=False,null=False)
     foursquare_id = models.CharField(max_length=100, blank=False,unique=True,null=False)
     foursquare_auth = models.CharField(max_length=100, blank=False,unique=False,null=False)
     twitter_id = models.CharField(max_length=50,blank=True,null=False)
