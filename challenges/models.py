@@ -7,6 +7,7 @@ import datetime
 import os
 from getlostbot.users.models import User
 import logging
+import random
 
 class ChallengeManager(models.Manager):
     
@@ -16,9 +17,11 @@ class ChallengeManager(models.Manager):
         #get venues similar to the one sent
         req_uri = 'https://api.foursquare.com/v2/venues/'+venue['id']+'/similar?limit=1&oauth_token='+user.foursquare_auth
         json_data = simplejson.loads(urllib2.urlopen(req_uri).read())
+        similar_venues = json_data['response']['similarVenues']['items']
+        random.shuffle(similar_venues)#randomise so we don't get same one first each time
         
         new_venue = None
-        for suggestion in json_data['response']['similarVenues']['items']:
+        for suggestion in similar_venues:
             #if they haven't been here before, we'll send them there.
             been_here = False
             for history in venue_history:
@@ -48,12 +51,14 @@ class ChallengeManager(models.Manager):
         '''
         #get venues similar to the one sent
         logging.debug( "finding recommended venues near "+venue['name']+" for "+str(user))
-        req_uri = 'https://api.foursquare.com/v2/venues/explore?ll='+str(venue['location']['lat'])+','+str(venue['location']['lng'])+'&novelty=new&limit=1&oauth_token='+user.foursquare_auth
+        req_uri = 'https://api.foursquare.com/v2/venues/explore?ll='+str(venue['location']['lat'])+','+str(venue['location']['lng'])+'&novelty=new&limit=10&oauth_token='+user.foursquare_auth
         #print req_uri
         json_data = simplejson.loads(urllib2.urlopen(req_uri).read())
+        possible_venues = json_data['response']['groups'][0]['items']
+        random.shuffle(possible_venues)
         try:
             
-            new_venue = json_data['response']['groups'][0]['items'][0]['venue']
+            new_venue = possible_venues[0]['venue']
             #print "got data "+str(new_venue['location'])
             if not new_venue['location'].has_key('lat'):
                 return None

@@ -139,6 +139,12 @@ def checkin(request):
     #get venue history
     req_uri = 'https://api.foursquare.com/v2/users/self/venuehistory?&oauth_token='+u.foursquare_auth
     venue_history = simplejson.loads(urllib2.urlopen(req_uri).read())['response']['venues']['items']
+    
+    #if they have checked into the same place twice in a row, abort (stops dupes)
+    if checkin['venue']['id'] == venue_history[1]['venue']['id']:
+        logging.debug("They've checked in here twice in a row! Aborting")
+        return HttpResponse("Duplicate checkin")
+    
     #based on their bravery, fetch X previous checkins.
     checkin_bravery = int(10 - (u.bravery * 10.0))
     if(checkin_bravery == 0):  #every checkin results in a challenge!
@@ -152,6 +158,7 @@ def checkin(request):
     #print venue_history
     
     #print "Checking "+str(checkin_bravery)+" past checkins for "+str(u)
+    
     for recent_checkin in recent_checkins:
         #if they haven't been here before, they are leading interesting lives, so we'll let them off
         
