@@ -8,6 +8,7 @@ import urllib2
 import simplejson
 from django.core.validators import email_re
 import logging
+import datetime
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def index(request):
@@ -124,9 +125,22 @@ def checkin(request):
     if not checkin.has_key('venue'):
         return HttpResponse('Only interested in venue checkins')
     
+    #if it is private, then discard
+    if checkin.has_key('private'):
+        if checkin['private'] == True:
+            logging.debug(str(u)+ ' is checking in privately to '+str(checkin['venue']['name'])+', shhhhhh!')
+            return HttpResponse('Private checkin')
+    
     #is this a completed challenge?
     if Challenge.objects.checkCompletedChallenge(u,checkin['venue']['id']):
         return HttpResponse('This was a completed challenge! no need to make a new one')
+    
+    #if they have checked into the same place twice in a row, abort (stops dupes)
+    #get challenges created in the last 2 hours, with this venue id
+    recent_challenges = Challenge.objects.filter(start_venue_id=checkin['venue']['id']).filter(user=u).filter(created__gte=(datetime.datetime.now()-datetime.timedelta(hours=2)))
+    if len(recent_challenges>0):
+        logging.debug("They've checked in here twice in a row! Aborting")
+        return HttpResponse("Duplicate checkin")
     
     #boring venues are now recommended to visit interesting ones :)
     #if it is a boring venue type, then discard
@@ -140,10 +154,7 @@ def checkin(request):
     req_uri = 'https://api.foursquare.com/v2/users/self/venuehistory?&oauth_token='+u.foursquare_auth
     venue_history = simplejson.loads(urllib2.urlopen(req_uri).read())['response']['venues']['items']
     
-    #if they have checked into the same place twice in a row, abort (stops dupes)
-    if checkin['venue']['id'] == venue_history[1]['venue']['id']:
-        logging.debug("They've checked in here twice in a row! Aborting")
-        return HttpResponse("Duplicate checkin")
+    
     
     #based on their bravery, fetch X previous checkins.
     checkin_bravery = int(10 - (u.bravery * 10.0))
