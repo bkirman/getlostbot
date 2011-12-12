@@ -98,5 +98,13 @@ class User(models.Model):
             bitly_url = "http://api.bitly.com/v3/shorten?login="+settings.BITLY_USER+"&apiKey="+settings.BITLY_API+"&longUrl="+urllib.quote(str(map_url))+"&format=json"
             map_url = simplejson.loads(urllib2.urlopen(bitly_url).read())['data']['url']
             self.sendTweet(message+" "+map_url)
-        
-        
+
+class Checkin(models.Model):
+    '''
+    Container class to store a queue of raw checkin pings received from foursquare.
+    '''
+    data = models.TextField(default='',blank=True,unique=False)
+    resolved = models.BooleanField(default=False)
+    created = models.DateTimeField()
+    objects = models.Manager()
+    

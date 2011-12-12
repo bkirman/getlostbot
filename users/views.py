@@ -2,7 +2,7 @@ from django.views.generic.simple import direct_to_template
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.conf import settings
 from django.http import HttpResponse, HttpRequest
-from models import User, UserManager
+from models import User, UserManager, Checkin
 from getlostbot.challenges.models import Challenge
 import urllib2
 import simplejson
@@ -189,3 +189,18 @@ def checkin(request):
     Challenge.objects.createChallenge(u, checkin['venue'],venue_history)
     return HttpResponse('Checkin Analysis Completed')
 
+
+def queue(request):
+    '''
+    Read the queue of incoming checkins and deal with them. This should only be called by local cron, but since it doesn't return anything im being lazy by not checking
+    '''
+    for checkin in Checkin.objects.filter(resolved=False):
+        r = HttpRequest()
+        r.POST['checkin'] = checkin.data
+        try:
+            checkin(r)
+            checkin.resolved = True
+            checkin.save()
+        except Exception, e:
+            logging.error("Error dealing with checkin item "+str(checkin.id)+" in queue; "+str(e))
+    
