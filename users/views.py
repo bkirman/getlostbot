@@ -194,15 +194,15 @@ def queue(request):
     '''
     Read the queue of incoming checkins and deal with them. This should only be called by local cron, but since it doesn't return anything im being lazy by not checking
     '''
-    for checkin in Checkin.objects.filter(resolved=False):
+    for cin in Checkin.objects.filter(resolved=False):
         r = HttpRequest()
-        r.POST['checkin'] = checkin.data
+        r.POST['checkin'] = cin.data
         try:
             checkin(r)
-            checkin.resolved = True
-            checkin.save()
+            cin.resolved = True
+            cin.save()
         except Exception, e:
-            logging.error("Error dealing with checkin item "+str(checkin.id)+" in queue; "+str(e))
+            logging.error("Error dealing with checkin item "+str(cin.id)+" in queue; "+str(e))
             
     return HttpResponse('Queue Finished')
     
