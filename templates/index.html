@@ -1,8 +1,71 @@
 {% extends "base.html" %}
 {% block title %}Welcome{% endblock %}
+{% block scripts %}
+<script src="/static/js/prototype.js" type="text/javascript"></script> 
+<script src="/static/js/scriptaculous.js" type="text/javascript"></script>
+<script type="text/javascript"> 
+    $('contentWrapper').appear();    
+    function displayTicker(response){
+        var checkinsJson = eval(response);
+        for(i=0; i<checkinsJson.length; i++)
+        {
+            var text = "<div id='tick" + i + "' style='display:none;'><div class='ticker'><a href='https://foursquare.com/user/"+checkinsJson[i]['u_id']+"'>"+checkinsJson[i]['u_name']+"</a> has just been challenged to try somewhere different than <a href='https://foursquare.com/venue/"+checkinsJson[i]['v_id']+"'>"+checkinsJson[i]['v_name']+"</a> again!</div></div>";
+            document.getElementById("ticker").innerHTML += text;
+        }
+        
+        tick(checkinsJson.length, checkinsJson.length - 1);
+    }
+ 
+    function tick(length, current){
+        if(current >= 0)        {
+            Effect.SlideDown("tick" + (current));
+            if((length - current) > 2)
+            {
+                Effect.Fade("tick" + (current + 2));
+            }
+            window.setTimeout("tick(" + length + "," + (current - 1) + ")", 4000);
+        }
+        else
+        {
+            window.setTimeout("tickClear(" + length + ",4)", 10);
+        }
+    }
+    
+    function tickClear(length, current){
+        if(current < 0)        {            window.setTimeout("tick(" + length + "," + (length - 1) + ")", 4000);
+        }
+        else        {
+            Effect.Fade("tick" + current);            window.setTimeout("tickClear(" + length + "," + (current -1) + ")", 4000);        }
+    }    
+ 
+    function getTicker(){
+        if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp=new XMLHttpRequest();
+        }
+        else{// code for IE6, IE5
+            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }        xmlhttp.onreadystatechange=function()
+        {
+            if (xmlhttp.readyState==4 && xmlhttp.status==200){
+                displayTicker(xmlhttp.responseText);
+            }
+        }
+ 
+        xmlhttp.open("GET","/ticker",true);
+        xmlhttp.send();
+    }
+</script>
+
+{% endblock %}
+{% block onload %}getTicker();{% endblock%}
 {% block content %}
 
+
 <div id="robot"><div class="speech_bubble"><h2>Greetings, Human. I'm GetLostBot!<h2><p>I'm a free service that challenges you to break your routine and explore new places.</p></div></div>
+<div style="height:50px;clear:both;">
+  <div id="ticker">
+  </div>
+</div>
 
 
 
@@ -18,5 +81,25 @@
 {% if session %}
 <p>You seem to have already authorised GetLostBot. You can change your settings or unsubscribe by <a href="/profile">visiting your profile page</a>.</p>
 {% endif %}
-<p style="font-size:small;">Want to <a href="/about">find out more</a>?</p>
+<p style="font-size:small;">Want to <a href="/about">learn more about this project</a>?</p>
+<div style="height:20px;width:600px;">
+        <div style="float:left;"><a href="http://twitter.com/share"
+        class="twitter-share-button" data-url="http://www.getlostbot.com"
+        data-text="Check out GetLostBot - when you get into a rut, it challenges you with maps to new places!" data-count="horizontal"
+        data-via="benki">Tweet</a><script type="text/javascript"
+        src="http://platform.twitter.com/widgets.js"></script></div>
+        <div style="float:left;">
+        <iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.getlostbot.com&amp;send=false&amp;layout=standard&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=dark&amp;font&amp;height=35&amp" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:35px;" allowTransparency="true"></iframe>
+        </div>
+        <div style="float:left;"><g:plusone size="medium" annotation="inline" width="200"></g:plusone></div>
+        <script type="text/javascript">
+  window.___gcfg = {lang: 'en-GB'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+   </div>
 {% endblock %}

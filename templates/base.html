@@ -11,6 +11,19 @@
         <link href='http://fonts.googleapis.com/css?family=Nova+Square' rel='stylesheet' type='text/css'>
         
         {%block scripts%}{%endblock%}
+        <script type="text/javascript">
+
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-19700615-2']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		
+		</script>
     </head>
     <body>
 	    <script type="text/javascript">window.onload=function(){ {%block onload%}{%endblock%} }</script>
@@ -26,7 +39,7 @@
 	        <div id="content">
 	        {%block content%}{%endblock%}
 	        </div>
-	        <div id="footer">
+	        <div id="footer" style="clear:both;">
 	                <p>GetLostBot is a 24hr hack developed by <a href="http://ben.kirman.org">Ben Kirman</a> for the <a href="http://rewiredstate.org/events/power-of-minds">"Power of Minds" event, organised by Rewired State and Honda</a>.</p>
 	        </div>
         </div>

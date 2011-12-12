@@ -203,4 +203,6 @@ def queue(request):
             checkin.save()
         except Exception, e:
             logging.error("Error dealing with checkin item "+str(checkin.id)+" in queue; "+str(e))
+            
+    return HttpResponse('Queue Finished')
     
