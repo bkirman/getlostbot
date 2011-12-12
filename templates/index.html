@@ -9,7 +9,7 @@
         var checkinsJson = eval(response);
         for(i=0; i<checkinsJson.length; i++)
         {
-            var text = "<div id='tick" + i + "' style='display:none;'><div class='ticker'><a href='https://foursquare.com/user/"+checkinsJson[i]['u_id']+"'>"+checkinsJson[i]['u_name']+"</a> has just been challenged to try somewhere different than <a href='https://foursquare.com/venue/"+checkinsJson[i]['v_id']+"'>"+checkinsJson[i]['v_name']+"</a> again!</div></div>";
+            var text = "<div id='tick" + i + "' style='display:none;'><div class='ticker'><a href='https://foursquare.com/user/"+checkinsJson[i]['u_id']+"'>"+checkinsJson[i]['u_name']+"</a> has just been challenged to try somewhere different than <a href='https://foursquare.com/venue/"+checkinsJson[i]['v_id']+"'>"+checkinsJson[i]['v_name']+"</a></div></div>";
             document.getElementById("ticker").innerHTML += text;
         }
         
@@ -62,7 +62,7 @@
 
 
 <div id="robot"><div class="speech_bubble"><h2>Greetings, Human. I'm GetLostBot!<h2><p>I'm a free service that challenges you to break your routine and explore new places.</p></div></div>
-<div style="height:50px;clear:both;">
+<div style="height:58px;clear:both;">
   <div id="ticker">
   </div>
 </div>
