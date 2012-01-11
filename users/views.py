@@ -143,7 +143,7 @@ def checkin(request):
     
     #if they have checked into the same place twice in a row, abort (stops dupes)
     #get challenges created in the last 2 hours, with this venue id
-    recent_challenges = Challenge.objects.filter(start_venue_id=checkin['venue']['id']).filter(user=u).filter(created__gte=(datetime.datetime.now()-datetime.timedelta(hours=2)))
+    recent_challenges = Challenge.objects.filter(start_venue_id=checkin['venue']['id']).filter(user=u).filter(created_gte=(datetime.datetime.now()-datetime.timedelta(hours=2)))
     if len(recent_challenges)>0:
         logging.debug("They've checked in here twice in a row! Aborting")
         return HttpResponse("Duplicate checkin")
