@@ -149,8 +149,9 @@ def checkin(request):
     boring_categories = ['Apartment Buildings','Other - Buildings','Meeting Room','Factory','Courthouse','Medical','Train Station', 'Subway', 'Dentist\'s Office','Doctor\'s Office','Emergency Room','Hospital','Veterinarians','Corporate / Office','Conference room','Coworking Space','Residence','Home','Travel','Airport']
     for category in checkin['venue']['categories']:
         if category['shortName'] in boring_categories:
-            return HttpResponse('Yawn, that checkin was to '+checkin['venue']['id']+', and '+category['shortName']+'s are a bit dull')
+            return HttpResponse('Yawn, that checkin was to '+str(checkin['venue']['id'])+', and '+category['shortName']+'s are a bit dull')
     
+    logging.debug( "now to deal with it")
     #check recent checkins - have they been here before?
     #get venue history
     req_uri = 'https://api.foursquare.com/v2/users/self/venuehistory?&oauth_token='+u.foursquare_auth+'&afterTimestamp='+ int(time.mktime((datetime.datetime.now() - datetime.timedelta(weeks=24)).timetuple())) #only check recent venue history (24 weeks)

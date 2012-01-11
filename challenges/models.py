@@ -130,7 +130,7 @@ class Challenge(models.Model):
 
     objects = ChallengeManager()
     def __unicode__(self):
-        return "Challenge for "+unicode(self.user)+" to go from venue "+self.start_name+" to "+self.end_name
+        return "Challenge for "+str(self.user)+" to go from venue "+self.start_name+" to "+self.end_name
     
     def setFinished(self):
         self.finished = datetime.datetime.now()
