@@ -118,7 +118,7 @@ def checkin(request):
         raise Exception("Attempted checkin with malformed request: "+unicode(request.POST))
     checkin = simplejson.loads(request.POST['checkin'])
     u = get_object_or_404(User,foursquare_id=checkin['user']['id'])
-    logging.debug("*CHECKIN PING from "+u)
+    logging.debug("*CHECKIN PING from "+str(u))
     #if user is inactive, just exit here
     if not u.active:
         return HttpResponse('Inactive User')
@@ -130,7 +130,7 @@ def checkin(request):
     #if it is private, then discard
     if checkin.has_key('private'):
         if checkin['private'] == True:
-            logging.debug(u+ ' is checking in privately to '+unicode(checkin['venue']['name'])+', shhhhhh!')
+            logging.debug(str(u)+ ' is checking in privately to '+unicode(checkin['venue']['name'])+', shhhhhh!')
             return HttpResponse('Private checkin')
     
     #is this a completed challenge?
@@ -185,7 +185,7 @@ def checkin(request):
                 else:#they haven't been here. therefore they are adventurous
                     break
         if not been_here:
-            logging.debug( u+" hasn't been to " + recent_checkin['venue']['name'] + " recently, so doesn't need challenging...yet")
+            logging.debug( str(u)+" hasn't been to " + recent_checkin['venue']['name'] + " recently, so doesn't need challenging...yet")
             return HttpResponse('User is exploring new places.')
         
     #if we got here, the user has been to every location before
