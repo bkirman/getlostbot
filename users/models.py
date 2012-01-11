@@ -59,7 +59,7 @@ class User(models.Model):
     #awards = models.ManyToManyField('awards.Award',through='awards.PlayerAward',related_name="players")
     objects = UserManager()
     def __unicode__(self):
-        if len(self.last_name > 0):
+        if len(self.last_name) > 0:
             return self.first_name + " " + unicode(self.last_name[0])
         else:
             return self.first_name
