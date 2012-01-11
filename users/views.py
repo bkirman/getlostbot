@@ -123,7 +123,7 @@ def checkin(request):
     if not u.active:
         return HttpResponse('Inactive User')
     #if already had a recent challenge, ignore
-    if len(Challenge.objects.filter(user=u).filter(created_gte=(datetime.datetime.now() - datetime.timedelta(days=1))).all())>0:
+    if len(Challenge.objects.filter(user=u).filter(created__gte=(datetime.datetime.now() - datetime.timedelta(days=1))).all())>0:
         logging.debug('Already had a challenge in the past day, ignoring')
         return HttpResponse()
     
