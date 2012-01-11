@@ -122,6 +122,10 @@ def checkin(request):
     #if user is inactive, just exit here
     if not u.active:
         return HttpResponse('Inactive User')
+    #if already had a recent challenge, ignore
+    if len(Challenge.objects.filter(user=u).filter(created=(datetime.datetime.now() - datetime.timedelta(days=1))).all())>0:
+        logging.debug('Already had a challenge in the past day, ignoring')
+        return HttpResponse()
     
     #if it is not a regular checkin, then discard
     if not checkin.has_key('venue'):
