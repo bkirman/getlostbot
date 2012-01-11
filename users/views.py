@@ -123,7 +123,7 @@ def checkin(request):
     if not u.active:
         return HttpResponse('Inactive User')
     #if already had a recent challenge, ignore
-    if len(Challenge.objects.filter(user=u).filter(created=(datetime.datetime.now() - datetime.timedelta(days=1))).all())>0:
+    if len(Challenge.objects.filter(user=u).filter(created_gte=(datetime.datetime.now() - datetime.timedelta(days=1))).all())>0:
         logging.debug('Already had a challenge in the past day, ignoring')
         return HttpResponse()
     
@@ -161,7 +161,7 @@ def checkin(request):
     req_uri = 'https://api.foursquare.com/v2/users/self/venuehistory?&oauth_token='+u.foursquare_auth+'&afterTimestamp='+ str(int(time.mktime((datetime.datetime.now() - datetime.timedelta(weeks=24)).timetuple()))) #only check recent venue history (24 weeks)
     venue_history = simplejson.loads(urllib2.urlopen(req_uri).read())['response']['venues']['items']
     
-    
+    print ("got here")
     
     #based on their bravery, fetch X previous checkins.
     checkin_bravery = int(10 - (u.bravery * 10.0))
