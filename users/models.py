@@ -43,6 +43,11 @@ class UserManager(models.Manager):
             u.active = True#everything seemed to happen ok, lets make the user active
             u.setPushNotifications(True)
         u.save()
+        msg = "Welcome to GetLostBot! You can change any settings at http://www.getlostbot.com/profile"
+        if u.contact_pref=="twitter":
+            u.sendTweet(msg)
+        else:
+            u.sendMail(msg)
         return u
 # Create your models here.
 class User(models.Model):

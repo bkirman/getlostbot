@@ -13,7 +13,7 @@ class ChallengeManager(models.Manager):
     
     def getSimilarVenue(self,user,venue,venue_history):
         '''find a suitable venue to send this user, based on nearby similar venues they have never visited'''
-        logging.debug("finding similar venues to "+venue['name']+" for "+str(user))
+        logging.debug("finding similar venues to "+venue['name']+" for "+unicode(user))
         #get venues similar to the one sent
         req_uri = 'https://api.foursquare.com/v2/venues/'+venue['id']+'/similar?limit=1&oauth_token='+user.foursquare_auth
         json_data = simplejson.loads(urllib2.urlopen(req_uri).read())
@@ -27,18 +27,18 @@ class ChallengeManager(models.Manager):
             for history in venue_history:
                 if history['venue']['id'] == suggestion['id']:
                     been_here = True
-                    logging.debug( suggestion['name']+ " is not a suitable venue for "+str(user)+", they have been here before")
+                    logging.debug( suggestion['name']+ " is not a suitable venue for "+unicode(user)+", they have been here before")
                     break
             #ALSO, if the new place appears to be in the same building, then skip it (hard to give directions!)
             if venue['location'].has_key('lat') and suggestion['location'].has_key('lat'):
                 if venue['location']['lat'] == suggestion['location']['lat'] and venue['location']['lng'] == suggestion['location']['lng'] :
                     been_here = True
-                    logging.debug( suggestion['name']+ " is not a suitable venue for "+str(user)+", they appear to be in the same building(?)")
+                    logging.debug( suggestion['name']+ " is not a suitable venue for "+unicode(user)+", they appear to be in the same building(?)")
                     continue
             #ALSO, it must have some kind of address
             if not suggestion['location'].has_key('lat'):
                 been_here = True
-                logging.debug( suggestion['name']+ " is not a suitable venue for "+str(user)+", the address is invalid")
+                logging.debug( suggestion['name']+ " is not a suitable venue for "+unicode(user)+", the address is invalid")
                 continue
             if not been_here:
                 return suggestion
@@ -50,8 +50,8 @@ class ChallengeManager(models.Manager):
         find a suitable venue based on the 4sq recommendation engine. Note that this doesn't care what the current venue is, so suggestions are more varied (and apparently frequently restaurants)
         '''
         #get venues similar to the one sent
-        logging.debug( "finding recommended venues near "+venue['name']+" for "+str(user))
-        req_uri = 'https://api.foursquare.com/v2/venues/explore?ll='+str(venue['location']['lat'])+','+str(venue['location']['lng'])+'&novelty=new&limit=10&oauth_token='+user.foursquare_auth
+        logging.debug( "finding recommended venues near "+venue['name']+" for "+unicode(user))
+        req_uri = 'https://api.foursquare.com/v2/venues/explore?ll='+unicode(venue['location']['lat'])+','+unicode(venue['location']['lng'])+'&novelty=new&limit=10&oauth_token='+user.foursquare_auth
         #print req_uri
         json_data = simplejson.loads(urllib2.urlopen(req_uri).read())
         possible_venues = json_data['response']['groups'][0]['items']
@@ -59,12 +59,12 @@ class ChallengeManager(models.Manager):
         try:
             
             new_venue = possible_venues[0]['venue']
-            #print "got data "+str(new_venue['location'])
+            #print "got data "+unicode(new_venue['location'])
             if not new_venue['location'].has_key('lat'):
                 return None
             
         except Exception, e:
-            logging.debug( "Couldn't find any suitable venues :( "+str(e))
+            logging.debug( "Couldn't find any suitable venues :( "+unicode(e))
             return None
         return new_venue
         
@@ -76,7 +76,7 @@ class ChallengeManager(models.Manager):
         '''
         #first off, check we can actually direct the person from their venue. It needs an address
         if not venue['location'].has_key('lat'):
-            logging.debug( "Can't generate a challenge for "+str(user)+" because venue "+venue['name']+ " doesn't seem to have an address or location")
+            logging.debug( "Can't generate a challenge for "+unicode(user)+" because venue "+venue['name']+ " doesn't seem to have an address or location")
             return False
         
         new_venue = self.getSimilarVenue(user, venue, venue_history)
@@ -84,24 +84,24 @@ class ChallengeManager(models.Manager):
             new_venue = self.getRecommendedVenue(user, venue)
             
         if new_venue == None:
-            logging.debug( "Couldn't find a suggestion for venue "+ venue['name']+ " for "+str(user)+ " (probably they have already been to all the possible places)")
+            logging.debug( "Couldn't find a suggestion for venue "+ venue['name']+ " for "+unicode(user)+ " (probably they have already been to all the possible places)")
             return False
         #begin challenge
-        logging.debug( "Creating Challenge for " + str(user)+ " to go from "+venue['name']+ " to " + new_venue['name'])
+        logging.debug( "Creating Challenge for " + unicode(user)+ " to go from "+venue['name']+ " to " + new_venue['name'])
         c = Challenge()
         c.user = user
         c.start_venue_id = venue['id']
         c.start_name = venue['name']
         if venue['location'].has_key('lat'):
-            c.start_address = str(venue['location']['lat'])+","+str(venue['location']['lng'])
+            c.start_address = unicode(venue['location']['lat'])+","+unicode(venue['location']['lng'])
         else:
-            c.start_address = str(venue['location']['address'])+", "+ str(venue['location']['postalCode'])
+            c.start_address = unicode(venue['location']['address'])+", "+ unicode(venue['location']['postalCode'])
         c.end_venue_id = new_venue['id']
         c.end_name = new_venue['name']
         if new_venue['location'].has_key('lat'):
-            c.end_address = str(new_venue['location']['lat'])+","+str(new_venue['location']['lng'])
+            c.end_address = unicode(new_venue['location']['lat'])+","+unicode(new_venue['location']['lng'])
         else:
-            c.end_address = str(new_venue['location']['address'])+", "+ str(new_venue['location']['postalCode'])
+            c.end_address = unicode(new_venue['location']['address'])+", "+ unicode(new_venue['location']['postalCode'])
         #print c
         c.save()
         user.notifyOfChallenge(c)
@@ -109,7 +109,7 @@ class ChallengeManager(models.Manager):
     
     def checkCompletedChallenge(self,u,venue_id):
         finished = False
-        for c in self.filter(end_venue_id=venue_id).filter(user=u).all():
+        for c in self.filter(end_venue_id=venue_id).filter(user=u).filter(finished=None).all():
             c.setFinished()
             finished=True
         return finished
@@ -129,7 +129,7 @@ class Challenge(models.Model):
 
     objects = ChallengeManager()
     def __unicode__(self):
-        return "Challenge for "+str(self.user)+" to go from venue "+self.start_name+" to "+self.end_name
+        return "Challenge for "+unicode(self.user)+" to go from venue "+self.start_name+" to "+self.end_name
     
     def setFinished(self):
         self.finished = datetime.datetime.now()
