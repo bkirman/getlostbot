@@ -206,7 +206,7 @@ def queue(request):
             cin.resolved = True
             cin.save()
         except Exception, e:
-            logging.error("Error dealing with checkin item "+unicode(cin.id)+" in queue; "+unicode(e))
+            logging.error("Error dealing with checkin item "+str(cin.id)+" in queue; "+str(e))
             
     return HttpResponse('Queue Finished')
     

@@ -52,7 +52,7 @@ class ChallengeManager(models.Manager):
         '''
         #get venues similar to the one sent
         logging.debug( "finding recommended venues near "+venue['name']+" for "+unicode(user))
-        req_uri = 'https://api.foursquare.com/v2/venues/explore?ll='+unicode(venue['location']['lat'])+','+unicode(venue['location']['lng'])+'&novelty=new&limit=10&oauth_token='+user.foursquare_auth
+        req_uri = 'https://api.foursquare.com/v2/venues/explore?ll='+str(venue['location']['lat'])+','+str(venue['location']['lng'])+'&novelty=new&limit=10&oauth_token='+user.foursquare_auth
         #print req_uri
         json_data = simplejson.loads(urllib2.urlopen(req_uri).read())
         possible_venues = json_data['response']['groups'][0]['items']
@@ -65,7 +65,7 @@ class ChallengeManager(models.Manager):
                 return None
             
         except Exception, e:
-            logging.debug( "Couldn't find any suitable venues :( "+unicode(e))
+            logging.debug( "Couldn't find any suitable venues :( "+str(e))
             return None
         return new_venue
         
@@ -94,13 +94,13 @@ class ChallengeManager(models.Manager):
         c.start_venue_id = venue['id']
         c.start_name = venue['name']
         if venue['location'].has_key('lat'):
-            c.start_address = unicode(venue['location']['lat'])+","+unicode(venue['location']['lng'])
+            c.start_address = str(venue['location']['lat'])+","+str(venue['location']['lng'])
         else:
             c.start_address = unicode(venue['location']['address'])+", "+ unicode(venue['location']['postalCode'])
         c.end_venue_id = new_venue['id']
         c.end_name = new_venue['name']
         if new_venue['location'].has_key('lat'):
-            c.end_address = unicode(new_venue['location']['lat'])+","+unicode(new_venue['location']['lng'])
+            c.end_address = str(new_venue['location']['lat'])+","+str(new_venue['location']['lng'])
         else:
             c.end_address = unicode(new_venue['location']['address'])+", "+ unicode(new_venue['location']['postalCode'])
         #print c
