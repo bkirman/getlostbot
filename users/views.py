@@ -8,7 +8,7 @@ import urllib2
 import simplejson
 from django.core.validators import email_re
 import logging
-import datetime
+import datetime, time
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def index(request):
@@ -146,14 +146,14 @@ def checkin(request):
     
     #boring venues are now recommended to visit interesting ones :)
     #if it is a boring venue type, then discard
-    #boring_categories = ['Apartment Buildings','Other - Buildings','Meeting Room','Factory','Courthouse','Medical','Dentist\'s Office','Doctor\'s Office','Emergency Room','Hospital','Optical Shops','Veterinarians','Corporate / Office','Conference room','Coworking Space','Residence','Home','Travel','Airport']
-    #for category in checkin['venue']['categories']:
-    #    if category['shortName'] in boring_categories:
-    #        return HttpResponse('Yawn, that checkin was a bit dull')
+    boring_categories = ['Apartment Buildings','Other - Buildings','Meeting Room','Factory','Courthouse','Medical','Train Station', 'Subway', 'Dentist\'s Office','Doctor\'s Office','Emergency Room','Hospital','Veterinarians','Corporate / Office','Conference room','Coworking Space','Residence','Home','Travel','Airport']
+    for category in checkin['venue']['categories']:
+        if category['shortName'] in boring_categories:
+            return HttpResponse('Yawn, that checkin was to '+checkin['venue']['id']+', and '+category['shortName']+'s are a bit dull')
     
     #check recent checkins - have they been here before?
     #get venue history
-    req_uri = 'https://api.foursquare.com/v2/users/self/venuehistory?&oauth_token='+u.foursquare_auth
+    req_uri = 'https://api.foursquare.com/v2/users/self/venuehistory?&oauth_token='+u.foursquare_auth+'&afterTimestamp='+ int(time.mktime((datetime.datetime.now() - datetime.timedelta(weeks=24)).timetuple())) #only check recent venue history (24 weeks)
     venue_history = simplejson.loads(urllib2.urlopen(req_uri).read())['response']['venues']['items']
     
     
@@ -185,7 +185,7 @@ def checkin(request):
                 else:#they haven't been here. therefore they are adventurous
                     break
         if not been_here:
-            logging.debug( unicode(u)+" hasn't been to " + recent_checkin['venue']['name'] + " before, so doesn't need challenging...yet")
+            logging.debug( unicode(u)+" hasn't been to " + recent_checkin['venue']['name'] + " recently, so doesn't need challenging...yet")
             return HttpResponse('User is exploring new places.')
         
     #if we got here, the user has been to every location before

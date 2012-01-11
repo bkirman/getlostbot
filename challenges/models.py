@@ -40,6 +40,7 @@ class ChallengeManager(models.Manager):
                 been_here = True
                 logging.debug( suggestion['name']+ " is not a suitable venue for "+unicode(user)+", the address is invalid")
                 continue
+            
             if not been_here:
                 return suggestion
                 
