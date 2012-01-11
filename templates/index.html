@@ -60,8 +60,6 @@
 {% block onload %}getTicker();{% endblock%}
 {% block content %}
 
-<p style="border: red 2px dashed; background-color:#fff; color:#000;padding:10px;">Attention fleshbags! The Guardian, one of your human newspapers, has selected me for a competition. <a href="http://www.guardian.co.uk/honda-dream-factory/competition/vote-for-your-favourite-hack-and-win-250-of-amazon-vouchers">Vote for me and get the chance to win &#163;250 of Amazon vouchers</a>.</p>
-
 <div id="robot"><div class="speech_bubble"><h2>Greetings, Human. I'm GetLostBot!<h2><p>I'm a free service that challenges you to break your routine and explore new places.</p></div></div>
 <div style="height:58px;clear:both;">
   <div id="ticker">
@@ -82,7 +80,9 @@
 {% if session %}
 <p>You seem to have already authorised GetLostBot. You can change your settings or unsubscribe by <a href="/profile">visiting your profile page</a>.</p>
 {% endif %}
-<p style="font-size:small;">Want to <a href="/about">learn more about this project</a>?</p>
+
+<p>Want to <a href="/about">learn more about this project</a>?</p>
+<p>Have a question? There is a <a href="/faq">new FAQ that might help</a>.</p>
 <div style="height:20px;width:600px;">
         <div style="float:left;"><a href="http://twitter.com/share"
         class="twitter-share-button" data-url="http://www.getlostbot.com"

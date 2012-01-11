@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div id="robot" onclick="document.location.href = '/';"><div class="speech_bubble"><h2>Who were you again?<h2></div></div>
+
+<p style="clear:both;">Your login session has timed out. Just click the authenticate button below to be taken to your profile.</p>
+<p><a href="{{foursquare_uri}}"><img src="/static/images/connect-foursquare.png" alt="Connect to Foursquare" border="0" /></a></p>
+{% endblock %}

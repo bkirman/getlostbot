@@ -19,7 +19,8 @@ def index(request):
 
 def about(request):
     return direct_to_template(request,'about.html')
-
+def faq(request):
+    return direct_to_template(request,'faq.html')
 
 def profile(request):
     '''
@@ -47,7 +48,8 @@ def profile(request):
         request.session['getlostbotuser'] = u.id
     else:#check session
         if not request.session.has_key('getlostbotuser'):
-            return direct_to_template(request,'error.html',{'error_title':'Can\'t find user','error_message':'We can\'t find reference to you. Click the robot to go back to the main page and try authenticating again.'})
+            foursquare_uri = 'https://foursquare.com/oauth2/authenticate?client_id='+settings.FOURSQUARE_CLIENT+'&response_type=code&redirect_uri='+request.build_absolute_uri('/profile')
+            return direct_to_template(request,'profile_login.html',{'foursquare_uri':foursquare_uri})
         try:
             u = User.objects.get(id=request.session['getlostbotuser'])
         except User.DoesNotExist:
@@ -113,10 +115,10 @@ def checkin(request):
     '''
     
     if not request.POST.has_key("checkin"):
-        raise Exception("Attempted checkin with malformed request: "+str(request.POST))
+        raise Exception("Attempted checkin with malformed request: "+unicode(request.POST))
     checkin = simplejson.loads(request.POST['checkin'])
     u = get_object_or_404(User,foursquare_id=checkin['user']['id'])
-    logging.debug("*CHECKIN PING from "+str(u))
+    logging.debug("*CHECKIN PING from "+unicode(u))
     #if user is inactive, just exit here
     if not u.active:
         return HttpResponse('Inactive User')
@@ -128,7 +130,7 @@ def checkin(request):
     #if it is private, then discard
     if checkin.has_key('private'):
         if checkin['private'] == True:
-            logging.debug(str(u)+ ' is checking in privately to '+str(checkin['venue']['name'])+', shhhhhh!')
+            logging.debug(unicode(u)+ ' is checking in privately to '+unicode(checkin['venue']['name'])+', shhhhhh!')
             return HttpResponse('Private checkin')
     
     #is this a completed challenge?
@@ -163,8 +165,10 @@ def checkin(request):
         return HttpResponse('New Challenge Created!')
         
     req_uri = 'https://api.foursquare.com/v2/users/self/checkins?limit='+str(checkin_bravery)+'&oauth_token='+u.foursquare_auth
-    recent_checkins = simplejson.loads(urllib2.urlopen(req_uri).read())['response']['checkins']['items']
-    
+    try:
+        recent_checkins = simplejson.loads(urllib2.urlopen(req_uri).read())['response']['checkins']['items']
+    except Exception, e:
+        return HttpResponse('There was an error with the data from foursquare regarding this checkin (they might have disabled GLB)')
     #for each recent checkin, check if they have been here before
     #print venue_history
     
@@ -181,7 +185,7 @@ def checkin(request):
                 else:#they haven't been here. therefore they are adventurous
                     break
         if not been_here:
-            logging.debug( str(u)+" hasn't been to " + recent_checkin['venue']['name'] + " before, so doesn't need challenging...yet")
+            logging.debug( unicode(u)+" hasn't been to " + recent_checkin['venue']['name'] + " before, so doesn't need challenging...yet")
             return HttpResponse('User is exploring new places.')
         
     #if we got here, the user has been to every location before
@@ -202,7 +206,7 @@ def queue(request):
             cin.resolved = True
             cin.save()
         except Exception, e:
-            logging.error("Error dealing with checkin item "+str(cin.id)+" in queue; "+str(e))
+            logging.error("Error dealing with checkin item "+unicode(cin.id)+" in queue; "+unicode(e))
             
     return HttpResponse('Queue Finished')
     

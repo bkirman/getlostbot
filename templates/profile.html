@@ -15,23 +15,23 @@
 
 <div id="robot"><div class="speech_bubble"><h2>Welcome, {{first_name}}<h2><p>This page allows you to change how I behave</p></div></div>
 
-<p>GetLost bot is <strong style="color:{% if active %}green;">Active</strong>  (<a href="/profile?toggleactive=1">Unsubscribe</a>){% else %}red;">Inactive</strong>  (<a href="/profile?toggleactive=1">Activate GetLostBot</a>){%endif%}</p>
+<p>GetLostBot is <strong style="color:{% if active %}green;">Active</strong>  (<a href="/profile?toggleactive=1">Unsubscribe</a>){% else %}red;">Inactive</strong>  (<a href="/profile?toggleactive=1">Activate GetLostBot</a>){%endif%}</p>
 {% if active %}
 <p>Now that GetLostBot is active, it will automatically track your foursquare checkins. <em><u>You don't need to do anything else</u></em>!</p>
 <p>If you haven't heard from GetLostBot, be patient - it is only triggered when your checkins show you have entered a routine. However, below you can change your "Bravery" setting.</p>
 <p>Your bravery determines how often GetLostBot will send you challenges, and also affects the type of venues it will suggest. Higher bravery means more frequent and varied challenges.</p>
 <p><strong style="float:left;position:relative;top:7px;padding-right:10px;">Bravery:</strong><input type="range" id="bravery" name="bravery" value="{{bravery}}" min="0" max="1" step="0.1" /></p>
 <div style="clear:both;"></div>
-<p><input type="submit" value="Save" onclick="document.location.href='/profile?setbravery='+document.getElementById('bravery').value;"></p>
+<p><input type="submit" value="Save Bravery" onclick="document.location.href='/profile?setbravery='+document.getElementById('bravery').value;"></p>
 {% endif %}
 <p>If you would like to change your contact settings, you can do that below. Note that GetLostBot requires a form of contact otherwise it won't be able to let you know when you get a challenge</p>
-<p>Use the radio buttons to select your preferred contact method.</p>
+<p>Use the radio buttons to select your preferred contact method. (details from Foursquare)</p>
 {% if contact_error %}<p style="border: red 1px dashed;padding:5px;">There was an error with your contact details. You must enter a valid Email or Twitter account to reactivate GetLostBot</p>{%endif%}
 <form name="contact" id="contact" action="/profile" method="POST">{% csrf_token %}
 <table border="0">
 <tr><td><input type="radio" name="prefer" value="email" {%if prefer_email%}checked{%endif%}/></td><td>Email:</td><td><input name="email" type="text" length="50" size="30" value="{{email}}" /></td></tr>
 <tr><td><input type="radio" name="prefer" value="twitter" {%if not prefer_email%}checked{%endif%}/></td><td>Twitter:</td><td><input name="twitter" type="text" length="50" size="30" value="@{{twitter}}" /</td></tr>
-<tr><td colspan="2"><input type="submit" value="Save" /></td></tr>
+<tr><td colspan="2"><input type="submit" value="Save Contact Details" /></td></tr>
 </table>
 
 </form>

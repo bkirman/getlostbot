@@ -59,13 +59,16 @@ class User(models.Model):
     #awards = models.ManyToManyField('awards.Award',through='awards.PlayerAward',related_name="players")
     objects = UserManager()
     def __unicode__(self):
-        return self.first_name + " " + str(self.last_name[0])
+        if len(self.last_name > 0):
+            return self.first_name + " " + unicode(self.last_name[0])
+        else:
+            return self.first_name
     
     def sendTweet(self, message):
         auth = tweepy.OAuthHandler(settings.TWITTER_CONSUMER_KEY,settings.TWITTER_CONSUMER_SECRET)
         auth.set_access_token(settings.TWITTER_AUTH_KEY, settings.TWITTER_AUTH_SECRET)
         api = tweepy.API(auth)
-        api.update_status('@'+self.twitter_id+' '+message)
+        api.update_status('@'+self.twitter_id+' '+unicode(message))
         
     def sendMail(self,message):
         send_mail('Challenge from GetLostBot!',message,'bkirman@lincoln.ac.uk',[self.email])
