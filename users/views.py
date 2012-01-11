@@ -154,7 +154,7 @@ def checkin(request):
     
     #check recent checkins - have they been here before?
     #get venue history
-    req_uri = 'https://api.foursquare.com/v2/users/self/venuehistory?&oauth_token='+u.foursquare_auth+'&afterTimestamp='+ int(time.mktime((datetime.datetime.now() - datetime.timedelta(weeks=24)).timetuple())) #only check recent venue history (24 weeks)
+    req_uri = 'https://api.foursquare.com/v2/users/self/venuehistory?&oauth_token='+u.foursquare_auth+'&afterTimestamp='+ str(int(time.mktime((datetime.datetime.now() - datetime.timedelta(weeks=24)).timetuple()))) #only check recent venue history (24 weeks)
     venue_history = simplejson.loads(urllib2.urlopen(req_uri).read())['response']['venues']['items']
     
     
@@ -174,7 +174,7 @@ def checkin(request):
     #print venue_history
     
     #print "Checking "+str(checkin_bravery)+" past checkins for "+str(u)
-    logging.debug( "now to deal with it")
+    #logging.debug( "now to deal with it")
     for recent_checkin in recent_checkins:
         #if they haven't been here before, they are leading interesting lives, so we'll let them off
         
