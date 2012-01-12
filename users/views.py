@@ -116,7 +116,12 @@ def checkin(request):
     
     if not request.POST.has_key("checkin"):
         raise Exception("Attempted checkin with malformed request: "+unicode(request.POST))
-    checkin = simplejson.loads(request.POST['checkin'])
+    try:
+        checkin = simplejson.loads(unicode(request.POST['checkin']))
+    except Exception:
+        logging.debug("Invalid JSON in checkin")
+        return HttpResponse("invalid json")
+    
     u = get_object_or_404(User,foursquare_id=checkin['user']['id'])
     logging.debug("*CHECKIN PING from "+str(u))
     #if user is inactive, just exit here
@@ -129,6 +134,7 @@ def checkin(request):
     
     #if it is not a regular checkin, then discard
     if not checkin.has_key('venue'):
+        logging.debug("Not a venue checkin")
         return HttpResponse('Only interested in venue checkins')
     
     #if it is private, then discard
@@ -139,6 +145,7 @@ def checkin(request):
     
     #is this a completed challenge?
     if Challenge.objects.checkCompletedChallenge(u,checkin['venue']['id']):
+        logging.debug("they completed a challenge!")
         return HttpResponse('This was a completed challenge! no need to make a new one')
     
     #if they have checked into the same place twice in a row, abort (stops dupes)
@@ -153,6 +160,7 @@ def checkin(request):
     boring_categories = ['Apartment Buildings','Other - Buildings','Meeting Room','Factory','Courthouse','Medical','Train Station', 'Subway', 'Dentist\'s Office','Doctor\'s Office','Emergency Room','Hospital','Veterinarians','Corporate / Office','Conference room','Coworking Space','Residence','Home','Travel','Airport']
     for category in checkin['venue']['categories']:
         if category['shortName'] in boring_categories:
+            logging.debug("Looks like a boring location - "+category['shortName'])
             return HttpResponse('Yawn, that checkin was to '+str(checkin['venue']['id'])+', and '+category['shortName']+'s are a bit dull')
     
     
@@ -161,7 +169,6 @@ def checkin(request):
     req_uri = 'https://api.foursquare.com/v2/users/self/venuehistory?&oauth_token='+u.foursquare_auth+'&afterTimestamp='+ str(int(time.mktime((datetime.datetime.now() - datetime.timedelta(weeks=24)).timetuple()))) #only check recent venue history (24 weeks)
     venue_history = simplejson.loads(urllib2.urlopen(req_uri).read())['response']['venues']['items']
     
-    print ("got here")
     
     #based on their bravery, fetch X previous checkins.
     checkin_bravery = int(10 - (u.bravery * 10.0))
