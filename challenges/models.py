@@ -15,7 +15,7 @@ class ChallengeManager(models.Manager):
         '''find a suitable venue to send this user, based on nearby similar venues they have never visited'''
         logging.debug("finding similar venues to "+venue['name']+" for "+unicode(user))
         #get venues similar to the one sent
-        req_uri = 'https://api.foursquare.com/v2/venues/'+venue['id']+'/similar?limit=1&oauth_token='+user.foursquare_auth
+        req_uri = 'https://api.foursquare.com/v2/venues/'+venue['id']+'/similar?oauth_token='+user.foursquare_auth
         json_data = simplejson.loads(urllib2.urlopen(req_uri).read())
         similar_venues = json_data['response']['similarVenues']['items']
         random.shuffle(similar_venues)#randomise so we don't get same one first each time
@@ -112,7 +112,8 @@ class ChallengeManager(models.Manager):
         finished = False
         for c in self.filter(end_venue_id=venue_id).filter(user=u).filter(finished=None).all():
             c.setFinished()
-            finished=True
+            c.save()
+            return(True)
         return finished
     
 # Create your models here.

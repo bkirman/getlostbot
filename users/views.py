@@ -149,29 +149,28 @@ def checkin(request):
         return HttpResponse('This was a completed challenge! no need to make a new one')
     
     #if they have checked into the same place twice in a row, abort (stops dupes)
-    #get challenges created in the last 2 hours, with this venue id
-    recent_challenges = Challenge.objects.filter(start_venue_id=checkin['venue']['id']).filter(user=u).filter(created__gte=(datetime.datetime.now()-datetime.timedelta(hours=2)))
+    #get challenges created in the last 24 hours, with this venue id
+    recent_challenges = Challenge.objects.filter(start_venue_id=checkin['venue']['id']).filter(user=u).filter(created__gte=(datetime.datetime.now()-datetime.timedelta(hours=24)))
     if len(recent_challenges)>0:
         logging.debug("They've checked in here twice in a row! Aborting")
         return HttpResponse("Duplicate checkin")
     
-    #boring venues are now recommended to visit interesting ones :)
     #if it is a boring venue type, then discard
     boring_categories = ['Apartment Buildings','Other - Buildings','Meeting Room','Factory','Courthouse','Medical','Train Station', 'Subway', 'Dentist\'s Office','Doctor\'s Office','Emergency Room','Hospital','Veterinarians','Corporate / Office','Conference room','Coworking Space','Residence','Home','Travel','Airport']
     for category in checkin['venue']['categories']:
         if category['shortName'] in boring_categories:
-            logging.debug("Looks like a boring location - "+category['shortName'])
+            logging.debug('Yawn, that checkin was to '+str(checkin['venue']['name'])+', and '+category['shortName']+'s are a bit dull')
             return HttpResponse('Yawn, that checkin was to '+str(checkin['venue']['id'])+', and '+category['shortName']+'s are a bit dull')
     
     
     #check recent checkins - have they been here before?
     #get venue history
-    req_uri = 'https://api.foursquare.com/v2/users/self/venuehistory?&oauth_token='+u.foursquare_auth+'&afterTimestamp='+ str(int(time.mktime((datetime.datetime.now() - datetime.timedelta(weeks=24)).timetuple()))) #only check recent venue history (24 weeks)
+    req_uri = 'https://api.foursquare.com/v2/users/self/venuehistory?oauth_token='+u.foursquare_auth+'&afterTimestamp='+ str(int(time.mktime((datetime.datetime.now() - datetime.timedelta(weeks=10)).timetuple()))) #only check recent venue history (10 weeks)
     venue_history = simplejson.loads(urllib2.urlopen(req_uri).read())['response']['venues']['items']
     
     
     #based on their bravery, fetch X previous checkins.
-    checkin_bravery = int(10 - (u.bravery * 10.0))
+    checkin_bravery = int(11 - (u.bravery * 10.0))
     if(checkin_bravery == 0):  #every checkin results in a challenge!
         Challenge.objects.createChallenge(u, checkin['venue'],venue_history)
         return HttpResponse('New Challenge Created!')

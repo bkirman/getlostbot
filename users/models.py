@@ -36,6 +36,10 @@ class UserManager(models.Manager):
             u.email = user_obj['contact']['email']
         if user_obj['contact'].has_key('twitter'):
             u.twitter_id = user_obj['contact']['twitter']
+            if(u.twitter_id==''):
+                u.contact_pref="email"
+        else:
+            u.contact_pref = "email"
         u.save()
         if u.email == None and u.twitter_id == None:# no way of contacting this user
             u.active= False
@@ -70,6 +74,8 @@ class User(models.Model):
             return self.first_name
     
     def sendTweet(self, message):
+        if self.twitter_id == None or self.twitter_id == '':#they don't have twitter...
+            return self.sendMail(message)
         auth = tweepy.OAuthHandler(settings.TWITTER_CONSUMER_KEY,settings.TWITTER_CONSUMER_SECRET)
         auth.set_access_token(settings.TWITTER_AUTH_KEY, settings.TWITTER_AUTH_SECRET)
         api = tweepy.API(auth)
