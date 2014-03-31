@@ -100,7 +100,7 @@ def force(request):
     For testing purposes, pass a local user id, and fetch the last checkin and push it to myself. Saves checking in every time I need to test!
     '''
     u = get_object_or_404(User,id=request.GET['user_id'])
-    req_uri = 'https://api.foursquare.com/v2/users/self/checkins?limit=1&oauth_token='+u.foursquare_auth
+    req_uri = 'https://api.foursquare.com/v2/users/self/checkins?v=20131016&limit=1&oauth_token='+u.foursquare_auth
     json_data = simplejson.loads(urllib2.urlopen(req_uri).read())
     check = json_data['response']['checkins']['items'][0]
     check['user'] = {'id':u.foursquare_id} #not included in request otherwise
@@ -165,7 +165,7 @@ def checkin(request):
     
     #check recent checkins - have they been here before?
     #get venue history
-    req_uri = 'https://api.foursquare.com/v2/users/self/venuehistory?oauth_token='+u.foursquare_auth+'&afterTimestamp='+ str(int(time.mktime((datetime.datetime.now() - datetime.timedelta(weeks=10)).timetuple()))) #only check recent venue history (10 weeks)
+    req_uri = 'https://api.foursquare.com/v2/users/self/venuehistory?v=20131016&oauth_token='+u.foursquare_auth+'&afterTimestamp='+ str(int(time.mktime((datetime.datetime.now() - datetime.timedelta(weeks=10)).timetuple()))) #only check recent venue history (10 weeks)
     venue_history = simplejson.loads(urllib2.urlopen(req_uri).read())['response']['venues']['items']
     
     
@@ -175,7 +175,7 @@ def checkin(request):
         Challenge.objects.createChallenge(u, checkin['venue'],venue_history)
         return HttpResponse('New Challenge Created!')
         
-    req_uri = 'https://api.foursquare.com/v2/users/self/checkins?limit='+str(checkin_bravery)+'&oauth_token='+u.foursquare_auth
+    req_uri = 'https://api.foursquare.com/v2/users/self/checkins?v=20131016&limit='+str(checkin_bravery)+'&oauth_token='+u.foursquare_auth
     try:
         recent_checkins = simplejson.loads(urllib2.urlopen(req_uri).read())['response']['checkins']['items']
     except Exception, e:
