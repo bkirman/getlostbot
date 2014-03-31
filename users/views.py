@@ -119,7 +119,7 @@ def checkin(request):
     try:
         checkin = simplejson.loads(unicode(request.POST['checkin']))
     except Exception:
-        logging.debug("Invalid JSON in checkin")
+        logging.debug("Invalid JSON in checkin "+request.POST['checkin'])
         return HttpResponse("invalid json")
     
     u = get_object_or_404(User,foursquare_id=checkin['user']['id'])
@@ -218,7 +218,7 @@ def queue(request):
             cin.save()
         except Exception, e:
             logging.error("Error dealing with checkin item "+str(cin.id)+" in queue; "+str(e))
-            cin.delete()
+            #cin.delete()
             
     return HttpResponse('Queue Finished')
     
