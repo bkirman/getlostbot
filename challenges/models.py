@@ -15,7 +15,7 @@ class ChallengeManager(models.Manager):
         '''find a suitable venue to send this user, based on nearby similar venues they have never visited'''
         logging.debug("finding similar venues to "+venue['name']+" for "+unicode(user))
         #get venues similar to the one sent
-        req_uri = 'https://api.foursquare.com/v2/venues/'+venue['id']+'/similar?oauth_token='+user.foursquare_auth
+        req_uri = 'https://api.foursquare.com/v2/venues/'+venue['id']+'/similar?v=20131016&oauth_token='+user.foursquare_auth
         json_data = simplejson.loads(urllib2.urlopen(req_uri).read())
         similar_venues = json_data['response']['similarVenues']['items']
         random.shuffle(similar_venues)#randomise so we don't get same one first each time
@@ -52,7 +52,7 @@ class ChallengeManager(models.Manager):
         '''
         #get venues similar to the one sent
         logging.debug( "finding recommended venues near "+venue['name']+" for "+unicode(user))
-        req_uri = 'https://api.foursquare.com/v2/venues/explore?ll='+str(venue['location']['lat'])+','+str(venue['location']['lng'])+'&novelty=new&limit=10&oauth_token='+user.foursquare_auth
+        req_uri = 'https://api.foursquare.com/v2/venues/explore?v=20131016&ll='+str(venue['location']['lat'])+','+str(venue['location']['lng'])+'&novelty=new&limit=10&oauth_token='+user.foursquare_auth
         #print req_uri
         json_data = simplejson.loads(urllib2.urlopen(req_uri).read())
         possible_venues = json_data['response']['groups'][0]['items']
