@@ -218,7 +218,7 @@ def queue(request):
             cin.save()
         except Exception, e:
             logging.error("Error dealing with checkin item "+str(cin.id)+" in queue; "+str(e))
-            #cin.delete()
+            cin.delete()
             
     return HttpResponse('Queue Finished')
     

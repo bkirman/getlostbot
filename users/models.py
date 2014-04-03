@@ -12,7 +12,7 @@ class UserManager(models.Manager):
     def createFromAccessToken(self,access_token):
         #get details of this user from foursquare and create new object
         #TODO: make sure they dont already exist
-        req_uri = "https://api.foursquare.com/v2/users/self?oauth_token="+access_token
+        req_uri = "https://api.foursquare.com/v2/users/self?v=20131016&oauth_token="+access_token
         json_data = simplejson.loads(urllib2.urlopen(req_uri).read())
         
         #print json_data
