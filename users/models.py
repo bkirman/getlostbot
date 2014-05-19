@@ -5,6 +5,7 @@ import simplejson
 from django.conf import settings
 import sys 
 import tweepy
+import logging
 import os
 from django.core.mail import send_mail
 
@@ -111,6 +112,7 @@ class User(models.Model):
         else:
             bitly_url = "https://api-ssl.bitly.com/v3/shorten?access_token="+settings.BITLY_AUTH+"&longUrl="+urllib.quote(str(map_url))
             map_url = simplejson.loads(urllib2.urlopen(bitly_url).read())['data']['url']
+            logging.debug("Bitly link: "+map_url)
             self.sendTweet(message+" "+map_url)
 
 class Checkin(models.Model):
