@@ -109,7 +109,7 @@ class User(models.Model):
         if self.contact_pref=='email':
             self.sendMail(message+ " \n"+map_url)
         else:
-            bitly_url = "http://api.bitly.com/v3/shorten?login="+settings.BITLY_USER+"&apiKey="+settings.BITLY_API+"&longUrl="+urllib.quote(str(map_url))+"&format=json"
+            bitly_url = "https://api-ssl.bitly.com/v3/shorten?access_token="+settings.BITLY_AUTH+"&longUrl="+urllib.quote(str(map_url))
             map_url = simplejson.loads(urllib2.urlopen(bitly_url).read())['data']['url']
             self.sendTweet(message+" "+map_url)
 

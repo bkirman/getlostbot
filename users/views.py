@@ -119,7 +119,7 @@ def checkin(request):
     try:
         checkin = simplejson.loads(unicode(request.POST['checkin']))
     except Exception:
-        logging.debug("Invalid JSON in checkin "+request.POST['checkin'])
+        logging.debug("Invalid JSON in checkin (probably unicode errors)")
         return HttpResponse("invalid json")
     
     u = get_object_or_404(User,foursquare_id=checkin['user']['id'])
