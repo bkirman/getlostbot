@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.conf import settings
 from django.http import HttpResponse, HttpRequest
 from models import User, UserManager, Checkin
-from getlostbot.challenges.models import Challenge
+from challenges.models import Challenge
 import urllib2
 import simplejson
 import logging
