@@ -8,6 +8,7 @@ import simplejson
 import logging
 import datetime, time
 from django.views.decorators.csrf import csrf_exempt
+from django.template.context_processors import csrf
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 
@@ -99,6 +100,7 @@ def profile(request):
             'contact_error':contact_error,
             'prefer':u.contact_pref
             }
+    data.update(csrf(request))
     return render_to_response('profile.html',data)
 
 #---------
