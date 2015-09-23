@@ -13,8 +13,6 @@ urlpatterns = patterns('',
     (r'^force','users.views.force'),
     (r'^checkin','users.views.checkin'),
     (r'^ticker/?$','challenges.views.ticker'),
-    (r'^static/(?P<path>.*)$', 'django.views.static.serve',
-        {'document_root': '/Users/bkirman/Documents/Projects/GetLostBot/getlostbot/public/'}),
     # Example:
     # (r'^getlost/', include('getlost.foo.urls')),
 
