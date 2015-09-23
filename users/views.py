@@ -1,4 +1,3 @@
-from django.views.generic.simple import direct_to_template
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.conf import settings
 from django.http import HttpResponse, HttpRequest
@@ -6,21 +5,23 @@ from models import User, UserManager, Checkin
 from getlostbot.challenges.models import Challenge
 import urllib2
 import simplejson
-from django.core.validators import email_re
 import logging
 import datetime, time
 from django.views.decorators.csrf import csrf_exempt
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+
 # Create your views here.
 def index(request):
     
     foursquare_uri = 'https://foursquare.com/oauth2/authenticate?client_id='+settings.FOURSQUARE_CLIENT+'&response_type=code&redirect_uri='+request.build_absolute_uri('/profile')
         
-    return direct_to_template(request,'index.html',{'foursquare_uri':foursquare_uri,'session':request.session.has_key('getlostbotuser')})
+    return render_to_response('index.html',{'foursquare_uri':foursquare_uri,'session':request.session.has_key('getlostbotuser')})
 
 def about(request):
-    return direct_to_template(request,'about.html')
+    return render_to_response('about.html')
 def faq(request):
-    return direct_to_template(request,'faq.html')
+    return render_to_response('faq.html')
 
 def profile(request):
     '''
@@ -74,10 +75,19 @@ def profile(request):
             u.contact_pref = request.POST['prefer']    
             u.save()
         
-        if (u.contact_pref=='twitter' and (u.twitter_id==' ' or u.twitter_id=='')) or (u.contact_pref=="email" and not email_re.match(u.email)):
+        if (u.contact_pref=='twitter' and (u.twitter_id==' ' or u.twitter_id=='')):
             u.setPushNotifications(False)
             u.save()
             contact_error = True
+        
+        if (u.contact_pref=="email"):
+            try:
+                validate_email(u.email)
+            except ValidationError:
+                u.setPushNotifications(False)
+                u.save()
+                contact_error = True
+        
                 
         
     data = {'first_name':u.first_name,
@@ -89,7 +99,7 @@ def profile(request):
             'contact_error':contact_error,
             'prefer':u.contact_pref
             }
-    return direct_to_template(request,'profile.html',data)
+    return render_to_response('profile.html',data)
 
 #---------
 #Below here it is all headless, based on pings from Foursquare

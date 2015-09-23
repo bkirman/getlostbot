@@ -3,3 +3,5 @@
 settings.py
 settings_dev.py
 getlost_dev.db
+.project
+.pydevproject

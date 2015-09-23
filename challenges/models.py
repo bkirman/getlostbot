@@ -5,7 +5,7 @@ import simplejson
 from django.conf import settings
 import datetime
 import os
-from getlostbot.users.models import User
+from users.models import User
 import logging
 import random
 
