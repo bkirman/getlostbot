@@ -128,7 +128,8 @@ class Challenge(models.Model):
     end_name = models.CharField(max_length=100, blank=False,unique=False,null=False)
     created = models.DateTimeField(auto_now_add=True)
     finished = models.DateTimeField(null=True,default=None)
-
+    class Meta:
+        app_label='challenges'
     objects = ChallengeManager()
     def __unicode__(self):
         return "Challenge for "+str(self.user)+" to go from venue "+self.start_name+" to "+self.end_name

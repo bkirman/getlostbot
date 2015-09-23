@@ -66,6 +66,10 @@ class User(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     bravery = models.FloatField(default=0.5)
     active = models.BooleanField(default=False)
+    
+    class Meta:
+        app_label='users'
+        
     #awards = models.ManyToManyField('awards.Award',through='awards.PlayerAward',related_name="players")
     objects = UserManager()
     def __unicode__(self):
@@ -123,4 +127,6 @@ class Checkin(models.Model):
     resolved = models.BooleanField(default=False)
     created = models.DateTimeField()
     objects = models.Manager()
+    class Meta:
+        app_label='users'
     
